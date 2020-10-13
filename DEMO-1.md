@@ -2,23 +2,27 @@
 
 ## Download
 
-* Download Apache Kafka from [http://kafka.apache.org/downloads](http://kafka.apache.org/downloads)
-* Unzip it and enter the unzipped directory
+* Download Apache Kafka 2.6.0 from [http://kafka.apache.org/downloads](http://kafka.apache.org/downloads)
+* Unpack it into `kafka-2.6.0` directory
+```
+mkdir kafka-2.6.0
+tar --strip-components=1 -C kafka-2.6.0 -xvf kafka_2.12-2.6.0.tgz
+```
 
 ## Start Zookeeper and Kafka
 
 * In different terminals:
     * Start Zookeeper
-        * `bin/zookeeper-server-start.sh config/zookeeper.properties`
+        * `./kafka-2.6.0/bin/zookeeper-server-start.sh ./kafka-2.6.0/config/zookeeper.properties`
     * Start Kafka
-        * `bin/kafka-server-start.sh config/server.properties`
+        * `./kafka-2.6.0/bin/kafka-server-start.sh ./kafka-2.6.0/config/server.properties`
 
 ## Consuming and producing messages
 
 * Start the console producer:
 
 ```
-bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic
+./kafka-2.6.0/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic
 ```
 
 * Wait until it is ready (it should show `>`).
@@ -26,13 +30,13 @@ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic
 * Next we can consume the messages
 
 ```
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic
+./kafka-2.6.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic
 ```
 
 * But this will by default show only new messages. You can add `--from-beginning` to see the messages sent in the past:
 
 ```
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic --from-beginning
+./kafka-2.6.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic --from-beginning
 ```
 
 ## Management tools
@@ -41,17 +45,17 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic
 
 * List the topics:
 ```
-bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+./kafka-2.6.0/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 ```
 
 * Create new topic:
 ```
-bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic my-topic --partitions 3 --replication-factor 1
+./kafka-2.6.0/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic my-topic --partitions 3 --replication-factor 1
 ```
 
 * Describe them to in more detail:
 ```
-bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe
+./kafka-2.6.0/bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe
 ```
 
 ## Kafka Connect
@@ -66,7 +70,13 @@ value.converter=org.apache.kafka.connect.storage.StringConverter
 * Run Kafka Connect with the file sink connector:
 
 ```
-bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-sink.properties
+./kafka-2.6.0/bin/connect-standalone.sh ./kafka-2.6.0/config/connect-standalone.properties ./kafka-2.6.0/config/connect-file-sink.properties
+```
+
+* Send some messages to topic `connect-test`:
+
+```
+./kafka-2.6.0/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic connect-test
 ```
 
 * Check the output file `test.sink.txt` to verify it got the messages:
